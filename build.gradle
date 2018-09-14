@@ -49,6 +49,13 @@ release {
   }
 }
 
+dependencies {
+  compile gradleApi()
+  
+  compile "org.apache.derby:derbynet:$derbyVersion"
+  compile "org.apache.derby:derbyclient:$derbyVersion"
+}
+
 // This disables the pedantic doclint feature of JDK8
 if (JavaVersion.current().isJava8Compatible()) {
   tasks.withType(Javadoc) {
