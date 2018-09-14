@@ -1,0 +1,80 @@
+plugins {
+  id "groovy"
+  id "idea"
+  id "maven"
+  id "com.github.hierynomus.license" version "0.11.0"
+  id "org.ajoberstar.release-opinion" version "1.4.2"
+}
+
+group = 'com.xebialabs.gradle.plugins'
+defaultTasks 'build'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+  jcenter()
+  maven {
+    url "https://plugins.gradle.org/m2/"
+  }
+  mavenLocal()
+  maven {
+    credentials {
+      username project.property("nexusUserName")
+      password project.property("nexusPassword")
+    }
+    url "${project.property('nexusBaseUrl')}/repositories/releases"
+  }
+}
+
+idea {
+  module {
+    downloadJavadoc = true
+    downloadSources = true
+  }
+}
+
+release {
+  grgit = org.ajoberstar.grgit.Grgit.open(dir: project.projectDir)
+  defaultVersionStrategy = org.ajoberstar.gradle.git.release.opinion.Strategies.SNAPSHOT
+  tagStrategy {
+    toTagString = { vs -> "${project.name}-$vs" }
+    parseTag = { org.ajoberstar.grgit.Tag tag ->
+      if (tag.name.startsWith(project.name)) {
+        com.github.zafarkhaja.semver.Version.valueOf(tag.name[project.name.size() + 1..-1])
+      } else {
+        null
+      }
+    }
+  }
+}
+
+// This disables the pedantic doclint feature of JDK8
+if (JavaVersion.current().isJava8Compatible()) {
+  tasks.withType(Javadoc) {
+    options.addStringOption('Xdoclint:none', '-quiet')
+  }
+}
+
+task sourcesJar(type: Jar) {
+  from sourceSets.main.allSource
+  classifier = 'sources'
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+  classifier = 'javadoc'
+  from javadoc.destinationDir
+}
+
+uploadArchives {
+  repositories.mavenDeployer {
+    repository(url: "${project.property("nexusBaseUrl")}/repositories/releases") {
+      authentication(userName: "${project.property("nexusUserName")}", password: "${project.property("nexusPassword")}")
+    }
+    snapshotRepository(url: "${project.property("nexusBaseUrl")}/repositories/snapshots") {
+      authentication(userName: "${project.property("nexusUserName")}", password: "${project.property("nexusPassword")}")
+    }
+  }
+}
+
+tasks.release.dependsOn([build, uploadArchives])
