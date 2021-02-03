@@ -7,6 +7,8 @@ import org.gradle.api.GradleException
 
 class StopDerbyTask extends AbstractDerbyTask {
 
+    boolean ignoreStopFailure = false
+
     @TaskAction
     void stopServer() {
         resolveParameters()
@@ -20,7 +22,9 @@ class StopDerbyTask extends AbstractDerbyTask {
             nsc.shutdown()
             waitForShutdown(nsc, 100, 100)
         } catch (Exception e) {
-            throw new GradleException("Cannot stop derby server", e)
+            if (!ignoreStopFailure) {
+                throw new GradleException("Cannot stop derby server", e)
+            }
         }
     }
 }
