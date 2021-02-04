@@ -9,5 +9,7 @@ class DerbyPlugin implements Plugin<Project> {
         project.extensions.create("derby", DerbyExtension, project)
         project.task('derbyStart', type: StartDerbyTask)
         project.task('derbyStop', type: StopDerbyTask)
+
+        DerbyPluginUtil.checkIfTaskStopped(project, 'derbyStart', 'derbyStop')
     }
 }
