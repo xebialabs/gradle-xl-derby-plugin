@@ -3,6 +3,7 @@ package com.xebialabs.gradle.plugins.derby
 import org.apache.derby.drda.NetworkServerControl
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
+import org.gradle.api.Project
 
 abstract class AbstractDerbyTask extends DefaultTask {
     static final String DERBY_WRK_DIR = "derby.system.home"
@@ -38,10 +39,10 @@ abstract class AbstractDerbyTask extends DefaultTask {
         throw new GradleException("derby server start timed out (" + (count*sleep) + " ms)")
     }
 
-    void waitForShutdown(NetworkServerControl nsc, int count, int sleep) {
+    static void waitForShutdown(Project project, NetworkServerControl nsc, int count, int sleep) {
         for (int i = 0; i < count; i++) {
             try {
-                logger.info("derby ping #" + i)
+                project.logger.info("derby ping #" + i)
                 nsc.ping()
                 Thread.sleep(sleep)
             } catch (Exception e) {
