@@ -7,6 +7,8 @@ class DerbyExtension {
     String dataDir = "$project.buildDir/derbydb"
     String hostname = "0.0.0.0"
     int port = 1527
+    Integer waitTimeout
+    Integer deadlockTimeout
 
     DerbyExtension(Project project) {
         this.project = project
