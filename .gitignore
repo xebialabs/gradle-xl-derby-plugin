@@ -1,7 +1,4 @@
-# use glob syntax.
-syntax: glob
-.gradle/
-
-# Build output
-build/
-out/
+.idea
+.gradle
+build
+out
