@@ -13,7 +13,7 @@ abstract class AbstractDerbyTask extends DefaultTask {
     String hostname
     Integer port
 
-    protected String resolveParameters() {
+    protected void resolveParameters() {
         if (dataDir == null || dataDir.isEmpty()) {
             dataDir = project.derby.dataDir
         }

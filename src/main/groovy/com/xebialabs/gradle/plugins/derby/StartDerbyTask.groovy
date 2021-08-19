@@ -1,9 +1,8 @@
 package com.xebialabs.gradle.plugins.derby
 
-import java.net.InetAddress
 import org.apache.derby.drda.NetworkServerControl
-import org.gradle.api.tasks.TaskAction
 import org.gradle.api.GradleException
+import org.gradle.api.tasks.TaskAction
 
 class StartDerbyTask extends AbstractDerbyTask {
     static final String DERBY_DEADLOCK_TIMEOUT = "derby.locks.deadlockTimeout"
@@ -24,7 +23,7 @@ class StartDerbyTask extends AbstractDerbyTask {
         }
 
         if (dataDir != null) {
-            dataDir = dataDir.trim();
+            dataDir = dataDir.trim()
             if (dataDir.isEmpty()) {
                 dataDir = null
             }
@@ -46,7 +45,7 @@ class StartDerbyTask extends AbstractDerbyTask {
             logger.lifecycle("Starting derby server on $hostname:$port")
             def nsc = new NetworkServerControl(InetAddress.getByName(hostname), port)
             nsc.start(new PrintWriter(System.out))
-            waitForStart(nsc, 100, 100);
+            waitForStart(nsc, 100, 100)
         } catch (Exception e) {
             throw new GradleException("Cannot start derby server", e)
         }
