@@ -12,7 +12,10 @@ buildscript {
 }
 
 plugins {
-    id("groovy")
+
+    kotlin("jvm") version "1.4.20"
+    `kotlin-dsl-base`
+
     id("idea")
     id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
     id("maven-publish")
@@ -24,13 +27,6 @@ apply(plugin = "xebialabs.root.opinions")
 
 group = "com.xebialabs.gradle.plugins"
 project.defaultTasks = listOf("build")
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
-    withSourcesJar()
-    withJavadocJar()
-}
 
 repositories {
     mavenCentral()
@@ -56,7 +52,7 @@ idea {
 
 dependencies {
     implementation(gradleApi())
-    implementation(localGroovy())
+    implementation(gradleKotlinDsl())
 
     implementation("org.apache.derby:derbynet:${properties["derbyVersion"]}")
     implementation("org.apache.derby:derbyclient:${properties["derbyVersion"]}")
@@ -167,6 +163,4 @@ tasks {
     named<Test>("test") {
         useJUnitPlatform()
     }
-
-    named<Upload>("uploadArchives")
 }
