@@ -3,6 +3,13 @@ buildscript {
         maven {
             url = uri("https://plugins.gradle.org/m2/")
         }
+        maven {
+            credentials {
+                username = project.property("nexusUserName").toString()
+                password = project.property("nexusPassword").toString()
+            }
+            url = uri("${project.property("nexusBaseUrl")}/repositories/releases")
+        }
         mavenLocal()
     }
 
@@ -56,6 +63,11 @@ dependencies {
 
     implementation("org.apache.derby:derbynet:${properties["derbyVersion"]}")
     implementation("org.apache.derby:derbyclient:${properties["derbyVersion"]}")
+    implementation("org.jetbrains.kotlin:kotlin-allopen:${properties["kotlin"]}")
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${properties["kotlin"]}")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:${properties["kotlin"]}")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${properties["kotlin"]}")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${properties["coroutinesVersion"]}")
 }
 
 if (project.hasProperty("sonatypeUsername") && project.hasProperty("public")) {
