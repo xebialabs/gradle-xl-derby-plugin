@@ -18,41 +18,46 @@ open class StartDerbyTask : AbstractDerbyTask() {
         private const val DERBY_DEADLOCK_TIMEOUT = "derby.locks.deadlockTimeout"
         private const val DERBY_WAIT_TIMEOUT = "derby.locks.waitTimeout"
 
-        private fun runCommand(project: Project, hostname: String, port: Int, workingDir: File = File("./")): Process? = runCatching {
+        private fun runCommand(project: Project, hostname: String, port: Int, env: Map<String, String>, workingDir: File): Process? = runCatching {
             val classpath = project.configurations.getByName("derbynet").asPath
             val jvmPath = "${File.javaHome}${File.separator}bin${File.separator}java"
-            ProcessBuilder(jvmPath, "-cp", classpath, NetworkServerControl::class.java.name, "start", "-h", hostname, "-p", port.toString(), "-noSecurityManager")
+            val pb = ProcessBuilder(jvmPath, "-cp", classpath, NetworkServerControl::class.java.name, "start", "-h", hostname, "-p", port.toString(), "-noSecurityManager")
                     .directory(workingDir.javaFile())
                     .redirectOutput(ProcessBuilder.Redirect.INHERIT)
                     .redirectError(ProcessBuilder.Redirect.INHERIT)
-                    .start()
+            pb.environment().putAll(env)
+            pb.start()
 
         }.onFailure {
             throw GradleException("Cannot start derby server", it)
         }.getOrNull()
 
         fun startingServer(project: Project, dataDir: String, hostname: String, port: Int, waitTimeout: Int, deadlockTimeout: Int, externalProcess: Boolean) {
+            val env = mutableMapOf<String, String>()
             if (dataDir.isNotEmpty()) {
                 val dataDirFile = project.file(dataDir)
-                System.setProperty(DERBY_WRK_DIR, dataDirFile.absolutePath)
+                env[DERBY_WRK_DIR] = dataDirFile.absolutePath
             }
             if (waitTimeout > 0) {
-                System.setProperty(DERBY_WAIT_TIMEOUT, waitTimeout.toString())
+                env[DERBY_WAIT_TIMEOUT] = waitTimeout.toString()
                 project.logger.lifecycle("Using derby wait timeout $waitTimeout")
             }
             if (deadlockTimeout > 0) {
-                System.setProperty(DERBY_DEADLOCK_TIMEOUT, deadlockTimeout.toString())
+                env[DERBY_DEADLOCK_TIMEOUT] = deadlockTimeout.toString()
                 project.logger.lifecycle("Using derby wait timeout $deadlockTimeout")
             }
 
             try {
-                project.logger.lifecycle("Starting derby server on $hostname:$port")
+                project.logger.lifecycle("Starting derby server on $hostname:$port with work dir $dataDir")
                 if (externalProcess) {
-                    runCommand(project, hostname, port)
+                    runCommand(project, hostname, port, env, File(env[DERBY_WRK_DIR] ?: "./"))
                     val nsc = NetworkServerControl(InetAddress.getByName(hostname), port)
                     waitForStart(project, nsc, 100, 100)
                     project.logger.lifecycle("Started derby external server on $hostname:$port")
                 } else {
+                    env.forEach {
+                        System.setProperty(it.key, it.value)
+                    }
                     val nsc = NetworkServerControl(InetAddress.getByName(hostname), port)
                     nsc.start(PrintWriter(System.out))
                     waitForStart(project, nsc, 100, 100)
@@ -71,7 +76,7 @@ open class StartDerbyTask : AbstractDerbyTask() {
     val deadlockTimeout = project.objects.property<Int>().value(DerbyPlugin.getExtension(project).deadlockTimeout)
 
     @Input
-    val externalProcess = project.objects.property<Boolean>().value(false)
+    val externalProcess = project.objects.property<Boolean>().value(DerbyPlugin.getExtension(project).externalProcess)
 
     init {
         project.afterEvaluate {

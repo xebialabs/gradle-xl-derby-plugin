@@ -18,7 +18,7 @@ open class StopDerbyTask: AbstractDerbyTask() {
                 System.setProperty(DERBY_WRK_DIR, dataDirFile.absolutePath)
             }
             try {
-                project.logger.info("Stopping derby server on $hostname:$port")
+                project.logger.lifecycle("Stopping derby server on $hostname:$port")
                 val nsc = NetworkServerControl(InetAddress.getByName(hostname), port)
                 nsc.shutdown()
                 waitForShutdown(project, nsc, 100, 100)

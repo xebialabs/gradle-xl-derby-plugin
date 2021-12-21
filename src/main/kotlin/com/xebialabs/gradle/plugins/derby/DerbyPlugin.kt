@@ -22,6 +22,7 @@ class DerbyPlugin: Plugin<Project> {
         derbyExtension.port.convention(1527)
         derbyExtension.waitTimeout.convention(-1)
         derbyExtension.deadlockTimeout.convention(-1)
+        derbyExtension.externalProcess.convention(false)
 
         project.tasks.create(StartDerbyTask.NAME, StartDerbyTask::class.java)
         project.tasks.create(StopDerbyTask.NAME, StopDerbyTask::class.java)

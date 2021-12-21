@@ -8,4 +8,5 @@ interface DerbyExtension {
     val port: Property<Int>
     val waitTimeout: Property<Int>
     val deadlockTimeout: Property<Int>
+    val externalProcess: Property<Boolean>
 }
