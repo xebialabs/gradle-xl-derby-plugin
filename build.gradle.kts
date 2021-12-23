@@ -3,6 +3,13 @@ buildscript {
         maven {
             url = uri("https://plugins.gradle.org/m2/")
         }
+        maven {
+            credentials {
+                username = project.property("nexusUserName").toString()
+                password = project.property("nexusPassword").toString()
+            }
+            url = uri("${project.property("nexusBaseUrl")}/repositories/releases")
+        }
         mavenLocal()
     }
 
@@ -12,7 +19,10 @@ buildscript {
 }
 
 plugins {
-    id("groovy")
+
+    kotlin("jvm") version "1.4.20"
+    `kotlin-dsl-base`
+
     id("idea")
     id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
     id("maven-publish")
@@ -24,13 +34,6 @@ apply(plugin = "xebialabs.root.opinions")
 
 group = "com.xebialabs.gradle.plugins"
 project.defaultTasks = listOf("build")
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
-    withSourcesJar()
-    withJavadocJar()
-}
 
 repositories {
     mavenCentral()
@@ -56,10 +59,15 @@ idea {
 
 dependencies {
     implementation(gradleApi())
-    implementation(localGroovy())
+    implementation(gradleKotlinDsl())
 
     implementation("org.apache.derby:derbynet:${properties["derbyVersion"]}")
     implementation("org.apache.derby:derbyclient:${properties["derbyVersion"]}")
+    implementation("org.jetbrains.kotlin:kotlin-allopen:${properties["kotlin"]}")
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${properties["kotlin"]}")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:${properties["kotlin"]}")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${properties["kotlin"]}")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${properties["coroutinesVersion"]}")
 }
 
 if (project.hasProperty("sonatypeUsername") && project.hasProperty("public")) {
@@ -167,6 +175,4 @@ tasks {
     named<Test>("test") {
         useJUnitPlatform()
     }
-
-    named<Upload>("uploadArchives")
 }
