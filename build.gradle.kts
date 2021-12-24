@@ -184,7 +184,7 @@ tasks {
 
 //    register<NebulaRelease>("nebulaRelease")
 
-    named<Upload>("uploadArchives") {
+    register<Upload>("uploadArchives") {
         dependsOn(named("publish"))
     }
 
