@@ -1,3 +1,6 @@
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+
 buildscript {
     repositories {
         maven {
@@ -34,6 +37,9 @@ apply(plugin = "xebialabs.root.opinions")
 
 group = "com.xebialabs.gradle.plugins"
 project.defaultTasks = listOf("build")
+
+val releasedVersion = "2.0.0-${LocalDateTime.now().format(DateTimeFormatter.ofPattern("Mdd.Hmm"))}"
+project.extra.set("releasedVersion", releasedVersion)
 
 repositories {
     mavenCentral()
@@ -174,5 +180,31 @@ if (project.hasProperty("sonatypeUsername") && project.hasProperty("public")) {
 tasks {
     named<Test>("test") {
         useJUnitPlatform()
+    }
+
+//    register<NebulaRelease>("nebulaRelease")
+
+    named<Upload>("uploadArchives") {
+        dependsOn(named("publish"))
+    }
+
+//    register("dumpVersion") {
+//        doLast {
+//            file(buildDir).mkdirs()
+//            file("$buildDir/version.dump").writeText("version=${releasedVersion}")
+//        }
+//    }
+
+    compileKotlin {
+        kotlinOptions.jvmTarget = JavaVersion.VERSION_11.toString()
+    }
+
+    compileTestKotlin {
+        kotlinOptions.jvmTarget = JavaVersion.VERSION_11.toString()
+    }
+
+    withType<ValidatePlugins>().configureEach {
+        failOnWarning.set(false)
+        enableStricterValidation.set(false)
     }
 }
