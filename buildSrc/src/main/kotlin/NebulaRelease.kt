@@ -14,7 +14,7 @@ open class NebulaRelease : DefaultTask() {
             args(
                 "build", "uploadArchives", "-Prelease.version=$version", "final",
                 "-Prelease.ignoreSuppliedVersionVerification=true",
-                "-x", "releaseCheck"
+                "-x", "releaseCheck", "--stacktrace"
             )
         }
     }
