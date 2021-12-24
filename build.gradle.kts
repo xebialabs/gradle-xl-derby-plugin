@@ -38,9 +38,6 @@ apply(plugin = "xebialabs.root.opinions")
 group = "com.xebialabs.gradle.plugins"
 project.defaultTasks = listOf("build")
 
-val releasedVersion = "2.0.0-${LocalDateTime.now().format(DateTimeFormatter.ofPattern("Mdd.Hmm"))}"
-project.extra.set("releasedVersion", releasedVersion)
-
 repositories {
     mavenCentral()
     mavenLocal()
@@ -181,19 +178,6 @@ tasks {
     named<Test>("test") {
         useJUnitPlatform()
     }
-
-//    register<NebulaRelease>("nebulaRelease")
-
-    register<Upload>("uploadArchives") {
-        dependsOn(named("publish"))
-    }
-
-//    register("dumpVersion") {
-//        doLast {
-//            file(buildDir).mkdirs()
-//            file("$buildDir/version.dump").writeText("version=${releasedVersion}")
-//        }
-//    }
 
     compileKotlin {
         kotlinOptions.jvmTarget = JavaVersion.VERSION_11.toString()

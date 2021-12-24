@@ -12,9 +12,9 @@ open class NebulaRelease : DefaultTask() {
         project.exec {
             executable("./gradlew")
             args(
-                "build", "uploadArchives", "-Prelease.version=$version", "final",
+                "build", "publish", "-Prelease.version=$version", "final",
                 "-Prelease.ignoreSuppliedVersionVerification=true",
-                "-x", "releaseCheck", "--stacktrace"
+                "-x", "releaseCheck"
             )
         }
     }
