@@ -3,12 +3,14 @@ buildscript {
         maven {
             url = uri("https://plugins.gradle.org/m2/")
         }
-        maven {
-            credentials {
-                username = project.property("nexusUserName").toString()
-                password = project.property("nexusPassword").toString()
+        if (project.hasProperty("nexusBaseUrl")) {
+            maven {
+                credentials {
+                    username = project.property("nexusUserName").toString()
+                    password = project.property("nexusPassword").toString()
+                }
+                url = uri("${project.property("nexusBaseUrl")}/repositories/releases")
             }
-            url = uri("${project.property("nexusBaseUrl")}/repositories/releases")
         }
         mavenLocal()
     }
@@ -41,12 +43,14 @@ repositories {
     maven {
         url = uri("https://plugins.gradle.org/m2/")
     }
-    maven {
-        credentials {
-            username = project.property("nexusUserName").toString()
-            password = project.property("nexusPassword").toString()
+    if (project.hasProperty("nexusBaseUrl")) {
+        maven {
+            credentials {
+                username = project.property("nexusUserName").toString()
+                password = project.property("nexusPassword").toString()
+            }
+            url = uri("${project.property("nexusBaseUrl")}/repositories/releases")
         }
-        url = uri("${project.property("nexusBaseUrl")}/repositories/releases")
     }
 }
 
