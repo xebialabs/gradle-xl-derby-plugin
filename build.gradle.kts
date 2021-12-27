@@ -175,4 +175,17 @@ tasks {
     named<Test>("test") {
         useJUnitPlatform()
     }
+
+    compileKotlin {
+        kotlinOptions.jvmTarget = JavaVersion.VERSION_11.toString()
+    }
+
+    compileTestKotlin {
+        kotlinOptions.jvmTarget = JavaVersion.VERSION_11.toString()
+    }
+
+    withType<ValidatePlugins>().configureEach {
+        failOnWarning.set(false)
+        enableStricterValidation.set(false)
+    }
 }
