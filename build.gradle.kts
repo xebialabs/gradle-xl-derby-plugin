@@ -192,6 +192,17 @@ tasks {
         useJUnitPlatform()
     }
 
+    named<Upload>("uploadArchives") {
+        dependsOn(named("publish"))
+    }
+
+    register("dumpVersion") {
+        doLast {
+            file(buildDir).mkdirs()
+            file("$buildDir/version.dump").writeText("version=${releasedVersion}")
+        }
+    }
+
     compileKotlin {
         kotlinOptions.jvmTarget = JavaVersion.VERSION_11.toString()
     }
