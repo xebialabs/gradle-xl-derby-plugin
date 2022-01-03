@@ -34,8 +34,6 @@ plugins {
     id("signing")
 }
 
-apply(plugin = "xebialabs.root.opinions")
-
 group = "com.xebialabs.gradle.plugins"
 project.defaultTasks = listOf("build")
 
