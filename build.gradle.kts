@@ -24,20 +24,20 @@ buildscript {
 }
 
 plugins {
-    kotlin("jvm") version "1.4.20"
+    kotlin("jvm") version "1.8.10"
     `kotlin-dsl-base`
 
     id("idea")
     id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
     id("maven-publish")
-    id("nebula.release") version "15.3.1"
+    id("nebula.release") version "17.2.2"
     id("signing")
 }
 
 group = "com.xebialabs.gradle.plugins"
 project.defaultTasks = listOf("build")
 
-val releasedVersion = "2.0.0-${LocalDateTime.now().format(DateTimeFormatter.ofPattern("Mdd.Hmm"))}"
+val releasedVersion = "3.0.0-${LocalDateTime.now().format(DateTimeFormatter.ofPattern("Mdd.Hmm"))}"
 project.extra.set("releasedVersion", releasedVersion)
 
 repositories {
@@ -192,7 +192,7 @@ tasks {
         useJUnitPlatform()
     }
 
-    named<Upload>("uploadArchives") {
+    register<Upload>("uploadArchives") {
         dependsOn(named("publish"))
     }
 

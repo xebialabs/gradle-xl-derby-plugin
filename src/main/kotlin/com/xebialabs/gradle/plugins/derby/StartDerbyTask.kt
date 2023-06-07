@@ -7,7 +7,6 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.property
 import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.library.impl.javaFile
 import java.io.PrintWriter
 import java.net.InetAddress
 
@@ -22,7 +21,7 @@ open class StartDerbyTask : AbstractDerbyTask() {
             val classpath = project.configurations.getByName("derbynet").asPath
             val jvmPath = "${File.javaHome}${File.separator}bin${File.separator}java"
             val pb = ProcessBuilder(jvmPath, "-cp", classpath, NetworkServerControl::class.java.name, "start", "-h", hostname, "-p", port.toString(), "-noSecurityManager")
-                    .directory(workingDir.javaFile())
+                    .directory(java.io.File(workingDir.path))
                     .redirectOutput(ProcessBuilder.Redirect.INHERIT)
                     .redirectError(ProcessBuilder.Redirect.INHERIT)
             pb.environment().putAll(env)
