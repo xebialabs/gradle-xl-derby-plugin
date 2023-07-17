@@ -188,7 +188,8 @@ tasks {
         useJUnitPlatform()
     }
 
-    register<Upload>("uploadArchives") {
+    register("uploadArchives") {
+        group = "upload"
         dependsOn(named("publish"))
     }
 
