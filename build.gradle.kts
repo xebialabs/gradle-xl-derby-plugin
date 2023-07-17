@@ -17,10 +17,6 @@ buildscript {
         }
         mavenLocal()
     }
-
-    dependencies {
-        classpath("com.xebialabs.gradle.plugins:gradle-xl-defaults-plugin:${properties["xlDefaultsPluginVersion"]}")
-    }
 }
 
 plugins {
