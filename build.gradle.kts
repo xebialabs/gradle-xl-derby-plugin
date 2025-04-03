@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -20,20 +21,20 @@ buildscript {
 }
 
 plugins {
-    kotlin("jvm") version "1.8.10"
+    kotlin("jvm") version "2.0.20"
     `kotlin-dsl-base`
 
     id("idea")
     id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
     id("maven-publish")
-    id("nebula.release") version "17.2.2"
+    id("nebula.release") version "20.2.0"
     id("signing")
 }
 
 group = "com.xebialabs.gradle.plugins"
 project.defaultTasks = listOf("build")
 
-val releasedVersion = "3.0.0-${LocalDateTime.now().format(DateTimeFormatter.ofPattern("Mdd.Hmm"))}"
+val releasedVersion = "5.0.0-${LocalDateTime.now().format(DateTimeFormatter.ofPattern("Mdd.Hmm"))}"
 project.extra.set("releasedVersion", releasedVersion)
 
 repositories {
@@ -55,8 +56,8 @@ repositories {
 
 idea {
     module {
-        setDownloadJavadoc(true)
-        setDownloadSources(true)
+        isDownloadJavadoc = true
+        isDownloadSources = true
     }
 }
 
@@ -175,8 +176,8 @@ if (project.hasProperty("sonatypeUsername") && project.hasProperty("public")) {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
     withSourcesJar()
     withJavadocJar()
 }
@@ -195,17 +196,21 @@ tasks {
 
     register("dumpVersion") {
         doLast {
-            file(buildDir).mkdirs()
-            file("$buildDir/version.dump").writeText("version=${releasedVersion}")
+            layout.buildDirectory.asFile.get().mkdirs()
+            layout.buildDirectory.file("version.dump").get().asFile.writeText("version=${releasedVersion}")
         }
     }
 
     compileKotlin {
-        kotlinOptions.jvmTarget = JavaVersion.VERSION_11.toString()
+        compilerOptions{
+            jvmTarget.set(JvmTarget.JVM_21)
+        }
     }
 
     compileTestKotlin {
-        kotlinOptions.jvmTarget = JavaVersion.VERSION_11.toString()
+        compilerOptions{
+            jvmTarget.set(JvmTarget.JVM_21)
+        }
     }
 
     withType<ValidatePlugins>().configureEach {
