@@ -185,6 +185,10 @@ java {
 tasks {
     register<NebulaRelease>("nebulaRelease")
 
+    register("nebulaPublishRelease") {
+        dependsOn("nebulaRelease")
+    }
+
     named<Test>("test") {
         useJUnitPlatform()
     }
