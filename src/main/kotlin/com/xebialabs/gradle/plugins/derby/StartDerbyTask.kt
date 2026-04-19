@@ -77,15 +77,6 @@ open class StartDerbyTask : AbstractDerbyTask() {
     @Input
     val externalProcess = project.objects.property<Boolean>().value(DerbyPlugin.getExtension(project).externalProcess)
 
-    init {
-        project.afterEvaluate {
-            if (externalProcess.get()) {
-                val derbynet = configurations.create("derbynet")
-                project.dependencies.add(derbynet.name, "org.apache.derby:derbynet:${properties["derbyVersion"]}")
-            }
-        }
-    }
-
     @TaskAction
     fun startServer() {
         startingServer(
